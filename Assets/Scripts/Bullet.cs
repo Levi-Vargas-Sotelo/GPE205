@@ -12,18 +12,20 @@ public class Bullet : MonoBehaviour
     //private float for delay time
     public float destroyTime;
 
+    //references the tank that shot the bullet
+    public GameObject shooter; 
+
     // Start is called before the first frame update
     void Start()
     {
-
+        Destroy(gameObject, destroyTime);
     }
 
     // Update is called once per frame
     void Update()
     {
+        //moves the bullet at a constant speed and direction
         transform.position += transform.forward * Time.deltaTime * bulletForce;
-
-        Destroy(gameObject, destroyTime);
     }
 
     // Destroy enemy and possibly make it take damage in the future through this using the bullet damage
@@ -32,9 +34,15 @@ public class Bullet : MonoBehaviour
         //Check to see if the tag on the collider is equal to Tank
         if (other.tag == "Tank")
         {
-            //Destroy it
-            Debug.Log("die");
-            Destroy(other.gameObject);
+            // damage it by taking its health and subtracting it
+            TankData otherTank = other.gameObject.GetComponent<TankData>();
+            otherTank.Health -= bulletDamage;
+
+            // destroy the bullet
+            Destroy(gameObject);
         }
+
+        // destroy bullet if hit anything else
+        Destroy(gameObject);
     }
 }

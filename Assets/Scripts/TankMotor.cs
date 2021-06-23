@@ -15,6 +15,12 @@ public class TankMotor : MonoBehaviour
     // Bullet Prefab
     public GameObject Bullet;
 
+    // To reference the damage from the data
+    public float bDamage;
+
+    // To reference the strenght from the data
+    public float bStrenght;
+
     
     // Awake is called when the GameObject is initialized 
     public void Awake() 
@@ -69,11 +75,13 @@ public class TankMotor : MonoBehaviour
     // Shooting 
     public void Shoot( float delay) 
     {
-        Instantiate (Bullet, Cannon.transform.position, Cannon.transform.rotation);
-    }
-
-    public void ReceiveDamage( float ammount) 
-    {
-
+        //instantiate bullet at cannon position
+        GameObject myBullet = Instantiate (Bullet, Cannon.transform.position, Cannon.transform.rotation) as GameObject;
+        Bullet bulletData = myBullet.GetComponent<Bullet>();
+        // make the bullet reference the tank that shot it
+        bulletData.shooter = this.gameObject;
+        // make the bullet get the data from the tank
+        bulletData.bulletForce = bStrenght;
+        bulletData.bulletDamage = bDamage;
     }
 }
