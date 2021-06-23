@@ -36,6 +36,9 @@ public class InputController : MonoBehaviour
     {
         // stating when we can shoot again
         nextEventTime = Time.time + delay;
+
+        motor.bStrenght = data.shootForce;
+        motor.bDamage = data.bulletDamage;
     }
 
     // Update is called once per frame

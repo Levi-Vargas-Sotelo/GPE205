@@ -19,6 +19,9 @@ public class TankData : MonoBehaviour
     // Strength of bullet
     public float shootForce = 5;
 
+    // Damage of the bullets
+    public float bulletDamage = 2;
+
     // Current Score of the tank
     public float Score = 0;
 

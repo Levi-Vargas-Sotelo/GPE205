@@ -1819,6 +1819,7 @@ MonoBehaviour:
   Health: 5
   shootDelay: 1
   shootForce: 5
+  bulletDamage: 2
   Score: 0
   pointsToGive: 100
 --- !u!114 &2054876878
@@ -1836,6 +1837,8 @@ MonoBehaviour:
   tf: {fileID: 2054876880}
   Cannon: {fileID: 1562354552}
   Bullet: {fileID: 2194490622271309832, guid: 3504a835831eb2e4ebd3b67aaaf6b3fc, type: 3}
+  bDamage: 0
+  bStrenght: 0
 --- !u!4 &2054876880 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400012, guid: 65e92f227846e794883569c427a9c4c3, type: 3}
