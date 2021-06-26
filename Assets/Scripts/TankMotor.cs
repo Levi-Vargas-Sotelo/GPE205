@@ -45,15 +45,15 @@ public class TankMotor : MonoBehaviour
     // Forward tank movement
     public void Move( float speed )
     {
-            // Create a vector for the speed
-            Vector3 speedVector;
+        // Create a vector for the speed
+        Vector3 speedVector;
 
-            // Make the vector have the same direction as the object the script is on and apply the speed value to the it.
-            speedVector = tf.forward;
-            speedVector *= speed;
+        // Make the vector have the same direction as the object the script is on and apply the speed value to the it.
+        speedVector = tf.forward;
+        speedVector *= speed;
 
-            // Use the Simple Move function from the CharacterController
-            characterController.SimpleMove (speedVector);
+        // Use the Simple Move function from the CharacterController
+        characterController.SimpleMove (speedVector);
     }
 
     // Tank rotation
@@ -83,5 +83,34 @@ public class TankMotor : MonoBehaviour
         // make the bullet get the data from the tank
         bulletData.bulletForce = bStrenght;
         bulletData.bulletDamage = bDamage;
+    }
+
+
+
+    // Function that rotates the tank towards the current waypoint
+    public bool RotateTowards ( Vector3 target, float speed )
+    {
+    // Vector to know distance of target
+    Vector3 vectorToTarget;
+
+    // We subtract the position of the waypoint from the tank position to know the distance between them and store it in a Vector3 variable
+    vectorToTarget = target - tf.position;
+
+    // Use a quaterion that points towards the target using the vector we got before
+    Quaternion targetRotation = Quaternion.LookRotation (vectorToTarget);
+         
+
+    // We rotate the tank using the quaternion function between the tank's current rotation, the target rotation vector and with the speed we set on the data
+    tf.rotation = Quaternion.RotateTowards (tf.rotation, targetRotation, speed * Time.deltaTime);
+
+    // When the tank gets to that rotation:
+    if ( targetRotation == tf.rotation ) 
+    {
+        
+        return false;
+    }
+
+    // Finished rotation
+    return true;
     }
 }
