@@ -11,7 +11,8 @@ public class TankData : MonoBehaviour
     public float turnSpeed = 180;
 
     // Health of player
-    public float Health = 5;
+    public float health = 5;
+    public float maxHealth;
 
     //Shooting delay
     public float shootDelay = 1.0f;
@@ -28,6 +29,8 @@ public class TankData : MonoBehaviour
     // Points this tank will give
     public float pointsToGive = 100;
 
+    public float fireRate = 1;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -37,7 +40,7 @@ public class TankData : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Health <= 0)
+        if (health <= 0)
         {
             Destroy(gameObject);
         }

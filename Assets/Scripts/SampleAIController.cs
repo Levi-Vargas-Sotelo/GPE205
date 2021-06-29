@@ -19,6 +19,15 @@ public class SampleAIController : MonoBehaviour
     // Variable to reference the transform of this tank
     public Transform tf;
 
+    // Enumerator variable to choose between different types of behaviours for the AI
+    public enum LoopType { Stop, Loop, PingPong };
+
+    // Variable to select the behaviour we use
+    public LoopType loopType; 
+
+    // Variable to know if the tank is moving forward or not
+    private bool isPatrolForward = true;
+
     // Awake is called when the GameObject is initialized 
     void Awake()
     {
@@ -51,11 +60,58 @@ public class SampleAIController : MonoBehaviour
         // If the tank is on the distance we set to be close enough by using quaternions
         if (Vector3.SqrMagnitude (waypoints[currentWaypoint].position - tf.position) < (closeEnough * closeEnough)) 
         {
-            // Move to the next waypoint in the array
-            if (currentWaypoint < waypoints.Length-1) 
+
+            switch (loopType) 
             {
-                currentWaypoint++;
-            }    
+                case LoopType.Stop:
+                    // Move to the next waypoint in the array
+                    if (currentWaypoint < waypoints.Length-1) 
+                    {
+                        currentWaypoint++;
+                    } 
+                break; 
+
+                case LoopType.Loop:
+                    // Move to the next waypoint in the array
+                    if (currentWaypoint < waypoints.Length-1)
+                    {
+                        currentWaypoint++;
+                    } else
+                    {
+                        // If it is the last, then set it all over again
+                        currentWaypoint = 0;
+                    }
+                break;
+
+                case LoopType.PingPong:
+                    // If the tank is moving forward
+                    if (isPatrolForward) 
+                    {
+                    // Move to the next waypoint in the array
+                    if (currentWaypoint < waypoints.Length-1) 
+                    {
+                        currentWaypoint++;
+                    } else
+                    {
+                        // If it reached the end of the waypoints then start decreasing the value and go backwards and mark that we are not moving forward anymore
+                        isPatrolForward = false;
+                        currentWaypoint--;
+                    }
+                    } else 
+                    {
+                        // Move to the next waypoint in the array although backwards this time
+                        if (currentWaypoint > 0) 
+                        {
+                        currentWaypoint--;
+                        } else 
+                        {
+                            // If it reaced the end again, start going through them on the right way and mark that we are moving forward once more until we reach the end once again
+                            isPatrolForward = true;
+                            currentWaypoint++;
+                        }
+                    }
+                break;
+            }
         }
     }
 }

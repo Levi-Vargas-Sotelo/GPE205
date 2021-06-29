@@ -11,10 +11,10 @@ public class InputController : MonoBehaviour
     public InputScheme input = InputScheme.WASD;
 
     // Variable for the tank motor script
-    public TankMotor motor;
+    private TankMotor motor;
 
     // Variable for the tank data script
-    public TankData data;
+    private TankData data;
 
     // Var to check if we can shoot
     public bool canShoot = true;
@@ -45,7 +45,8 @@ public class InputController : MonoBehaviour
     void Update()
     {
         // Check what the input is set to
-        switch (input) {
+        switch (input) 
+        {
             // If the input is set to arrow keys then do this code
             case InputScheme.arrowKeys:
                 // All of these are for moving the tank according to the direction and using the values from the tank data

@@ -31,18 +31,16 @@ public class Bullet : MonoBehaviour
     // Destroy enemy and possibly make it take damage in the future through this using the bullet damage
     private void OnTriggerEnter(Collider other)
     {
-        //Check to see if the tag on the collider is equal to Tank
-        if (other.tag == "Tank")
+        // Check if the object hit has a tank data to affect
+        if (other.GetComponent<TankData>() != null) 
         {
-            // damage it by taking its health and subtracting it
+            // If it does, then damage it accordingly and destroy bullet
             TankData otherTank = other.gameObject.GetComponent<TankData>();
-            otherTank.Health -= bulletDamage;
-
-            // destroy the bullet
+            otherTank.health -= bulletDamage;
             Destroy(gameObject);
         }
 
-        // destroy bullet if hit anything else
+        // Destroy bullet
         Destroy(gameObject);
     }
 }
