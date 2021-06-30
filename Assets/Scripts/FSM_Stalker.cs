@@ -2,24 +2,43 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FSM_AllTalk : MonoBehaviour
+public class FSM_Stalker : MonoBehaviour
 {
-    public enum AIState {Chase, ChaseAndFire, CheckForFlee, Flee, Rest};
-    public AIState aiState = AIState.Chase;
-    public float stateEnterTime;
+    // AI states and variable to reference them
+    public enum AIState {Pursue, Retreat, Heal};
+    public AIState aiState = AIState.Pursue;
+
     public float aiSenseRadius;
-    public float restingHealRate;
+
+    // Variables to reference elements of the tank to use and the target as well
     private TankData data;
     private TankMotor motor;
     public Transform target;
     private Transform tf;
+
+    // To know what step of avoiding the tank is in
     private int avoidanceStage = 0;
+
     // Time the tank takes after avoiding something
     public float avoidanceTime = 2.0f;
+    // Variable to use the value for avoiding something
     private float exitTime;
-    private float lastShootTime = 1;
+
+    // Value for the time the tank goes into fleeing
+    public float fleeTime = 10;
+    private float lastFleeTime; 
+    
+    // Variable to know last time the tank shot to make a firing rate for it
+    private float lastShootTime;
+
+    // Rate for healing the tank while resting
+    public float HealingTime;
+
+    // How much the tank flees
     public float fleeDistance = 1.0f; 
 
+    // Variable to know distance between player in a float format rather than vector 3
+    private float playerDistance;
 
     void Awake()
     {
@@ -30,101 +49,79 @@ public class FSM_AllTalk : MonoBehaviour
         motor.bDamage = data.bulletDamage;
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
     // Update is called once per frame
-    void Update () 
+    void Update()
     {
-        if ( aiState == AIState.Chase ) 
+        switch (aiState)
         {
-            // Perform Behaviors
-            if (avoidanceStage != 0) 
-            {
-                DoAvoidance();
-            } else 
-            {
-                DoChase();
-            }
+            case AIState.Pursue:
+                CheckPlayerDistance ();
 
-            // If health is low
-            if (data.health < data.maxHealth * 0.5f) 
-            {
-                ChangeState(AIState.CheckForFlee);
-            } else if (Vector3.Distance (target.position, tf.position) <= aiSenseRadius) 
-            {
-                ChangeState(AIState.ChaseAndFire);
-            }
-        } else if ( aiState == AIState.ChaseAndFire ) 
-        {
-            // Perform Behaviors
-            if (avoidanceStage != 0) 
-            {
-                DoAvoidance();
-            } else 
-            {
-                DoChase();
-
-                // Limit our firing rate, so we can only shoot if enough time has passed
-                if (Time.time > lastShootTime + data.fireRate) 
-                {
-                    motor.Shoot(data.shootForce); // Note: This assumes we have a "shooter" component with a "Shoot()" function
-                    lastShootTime = Time.time;
-                }
-            }
-            // Check for Transitions
-            if (data.health < data.maxHealth * 0.5f) 
-            {
-                ChangeState(AIState.CheckForFlee);
-            } else if (Vector3.Distance (target.position, tf.position) > aiSenseRadius) 
-            {
-                ChangeState(AIState.Chase);
-            }
-            } else if ( aiState == AIState.Flee ) 
-            {
-                // Perform Behaviors
+                // If we are avoiding
                 if (avoidanceStage != 0) 
                 {
                     DoAvoidance();
                 } else 
                 {
-                    DoFlee();
+                    DoChase();
+
+                    // Shoot according to the firing rate we set
+                    if (Time.time > lastShootTime + data.fireRate) 
+                    {
+                        motor.Shoot(data.shootForce);
+                        lastShootTime = Time.time;
+                    }
                 }
 
-            // Check for Transitions
-            if (Time.time >= stateEnterTime + 30) 
-            {
-                ChangeState(AIState.CheckForFlee);
-            }
-        } else if ( aiState == AIState.CheckForFlee ) 
-        {
-            // Perform Behaviors
-            CheckForFlee();
+                // If tank is damaged
+                if (data.health < data.maxHealth) 
+                {   
+                    // Retreat
+                    ChangeState(AIState.Retreat);
+                } 
+                // If the player is far away from the sense radius
+                else if (playerDistance <= aiSenseRadius) 
+                {
+                    ChangeState(AIState.Pursue);
+                }
 
-            // Check for Transitions
-            if (Vector3.Distance (target.position, tf.position) <= aiSenseRadius) 
-            {
-                ChangeState(AIState.Flee);
-            } else 
-            {
-                ChangeState(AIState.Rest);
-            }
-        } else if ( aiState == AIState.Rest ) 
-        {
-            // Perform Behaviors
-            DoRest();
+            break;
+            
+            case AIState.Retreat:
+                // Start fleeing timer
+                lastFleeTime -= Time.deltaTime;
 
-            // Check for Transitions
-            if (Vector3.Distance (target.position, tf.position) <= aiSenseRadius) 
-            {
-                ChangeState(AIState.Flee);
-            } else if (data.health >= data.maxHealth) 
-            {
-                ChangeState(AIState.Chase);
-            }
+                // Flee and avoid
+                if (avoidanceStage != 0) 
+                {
+                    DoAvoidance();
+                } else 
+                {
+                    Flee();
+                }
+
+                if (lastFleeTime <= 0)
+                {
+                    lastFleeTime = fleeTime;
+                    ChangeState (AIState.Heal);
+                }
+            break;
+
+            case AIState.Heal:
+                // Perform Behaviors
+                DoRest();
+
+                // See if the player is far enough so tank can heal
+                if (Vector3.Distance (target.position, tf.position) <= aiSenseRadius) 
+                {
+                    ChangeState(AIState.Retreat);
+                }
+                // If health was regained, then chase again
+                else if (data.health >= data.maxHealth) 
+                {
+                    ChangeState(AIState.Pursue);
+                }
+            break;
         }
     }
 
@@ -159,9 +156,17 @@ public class FSM_AllTalk : MonoBehaviour
                 return false;
             }
         }
-
     // Since there is no obstacle, then keep moving to the target
     return true;
+    }
+
+    public void DoRest() 
+    {
+        // Increase our health. Remember that our increase is "per second"!
+        data.health += HealingTime * Time.deltaTime;
+
+        // But never go over our max health
+        data.health = Mathf.Min (data.health, data.maxHealth);
     }
 
     void DoAvoidance () 
@@ -207,21 +212,7 @@ public class FSM_AllTalk : MonoBehaviour
         }
     }
 
-    public void CheckForFlee() 
-    {
-        // TODO: Write the CheckForFlee state.
-    }
-
-    public void DoRest() 
-    {
-        // Increase our health. Remember that our increase is "per second"!
-        data.health += restingHealRate * Time.deltaTime;
-
-        // But never go over our max health
-        data.health = Mathf.Min (data.health, data.maxHealth);
-    }
-
-    void DoFlee () 
+    void Flee () 
     {
         // We subtract the position of the player from the tank position to know the distance between them and store it in a Vector3 variable
         Vector3 vectorToTarget = target.position - tf.position;
@@ -241,14 +232,28 @@ public class FSM_AllTalk : MonoBehaviour
         // We pass that data to the motor and move to that point
         motor.RotateTowards( fleePosition, data.turnSpeed );
         motor.Move (data.moveSpeed);
+
+        if (CanMove (data.moveSpeed)) 
+        {
+            // If it can then move to it
+            motor.Move (data.moveSpeed);
+        } else 
+        {
+            // If it can not, then start avoiding the obstacle
+            avoidanceStage = 1;
+        }
     }
 
+    void CheckPlayerDistance ()
+    {
+        float distanceFromPlayer = Vector3.Distance (tf.transform.position, target.transform.position);
+        playerDistance = distanceFromPlayer;
+    }
+
+    // Change to a new state using this function
     public void ChangeState ( AIState newState ) 
     {
         // Change our state
         aiState = newState;
-
-        // save the time we changed states
-        stateEnterTime = Time.time;
     }
 }

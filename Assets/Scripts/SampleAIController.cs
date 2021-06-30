@@ -60,7 +60,6 @@ public class SampleAIController : MonoBehaviour
         // If the tank is on the distance we set to be close enough by using quaternions
         if (Vector3.SqrMagnitude (waypoints[currentWaypoint].position - tf.position) < (closeEnough * closeEnough)) 
         {
-
             switch (loopType) 
             {
                 case LoopType.Stop:
