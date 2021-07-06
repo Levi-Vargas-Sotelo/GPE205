@@ -5,15 +5,10 @@ using UnityEngine;
 public class PlayerSpawn : MonoBehaviour
 {
     public GameObject Player;
-    
-    // Variable for the game manager
-    public GameObject gameManagerObject;
-    public GameManager gameManager;
 
     void Awake ()
     {
-        gameManagerObject = GameObject.Find("GameManager");
-        gameManager = gameManagerObject.GetComponent<GameManager>();
+
     }
 
     // Start is called before the first frame update
@@ -32,6 +27,6 @@ public class PlayerSpawn : MonoBehaviour
     {
         // Spawn player
         GameObject player = Instantiate (Player,transform.position,Quaternion.identity) as GameObject;
-        gameManager.LookforPlayer();
+        GameManager.instance.LookforPlayer();
     }
 }

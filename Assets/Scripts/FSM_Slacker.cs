@@ -42,10 +42,6 @@ public class FSM_Slacker : MonoBehaviour
     // Time the tank takes after avoiding something
     public float avoidanceTime = 3.0f;
     private float exitTime;
-
-    // Variable for the game manager
-    public GameObject gameManagerObject;
-    public GameManager gameManager;
     
     // Awake is called when the GameObject is initialized 
     void Awake()
@@ -62,14 +58,17 @@ public class FSM_Slacker : MonoBehaviour
     void Start()
     {
         lastPanicTime = panicTime;
-        gameManagerObject = GameObject.Find("GameManager");
-        gameManager = gameManagerObject.GetComponent<GameManager>();
-        target = gameManager.player.transform;
+        target = GameManager.instance.player.transform;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (target == null)
+        {
+            target = GameManager.instance.player.transform;
+        }
+        
         switch (aiState)
         {
             case AIState.Sleep:

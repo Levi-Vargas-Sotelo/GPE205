@@ -293,9 +293,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abb6912fde9b77c4fa5f543797dda3a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rows: 2
-  cols: 2
-  mapSeed: 1
+  rows: 3
+  cols: 3
+  mapSeed: 0
   gridPrefabs:
   - {fileID: 6017433523472118818, guid: c69fbf86c48376e4ba44ee4d4903962b, type: 3}
   - {fileID: 4532014798095515337, guid: 80c25828fbb26be46b175d3fadac2e1f, type: 3}

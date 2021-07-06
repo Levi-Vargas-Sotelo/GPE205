@@ -26,6 +26,18 @@ public class MapGenerator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        
+        
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+
+    public void MakeMap()
+    {
         // If we set it to the map of the day then use only today values of the seed
         if (MapOfTheDay) 
         {
@@ -37,13 +49,6 @@ public class MapGenerator : MonoBehaviour
             // Creates the grid for the map at start of the game
             GenerateGrid ();
         }
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     // This function just returns a random prefab from the array list

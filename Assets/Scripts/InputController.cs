@@ -40,7 +40,7 @@ public class InputController : MonoBehaviour
         motor.bStrenght = data.shootForce;
         motor.bDamage = data.bulletDamage;
 
-        
+        GameManager.instance.player = this.gameObject;
     }
 
     // Update is called once per frame

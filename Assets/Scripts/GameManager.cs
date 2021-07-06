@@ -22,6 +22,9 @@ public class GameManager : MonoBehaviour
     // Input for a random seed generator
     public int spawnSeed;
 
+    public GameObject mapGenObject;
+    public MapGenerator mapGen;
+
     // Awake is called when the GameObject is initialized 
     public void Awake() 
     {
@@ -36,11 +39,16 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
             Debug.LogError("There are more than one game managers");
         }
+
+        mapGenObject = GameObject.Find("Map Generator");
+        mapGen = mapGenObject.GetComponent<MapGenerator>();
     }
     
     // Start is called before the first frame update
     void Start()
     {
+        mapGen.MakeMap();
+
         // Set the random value and start the spawn tank function
         spawnSeed = DateToInt (DateTime.Now);
         UnityEngine.Random.InitState(spawnSeed);
@@ -114,17 +122,29 @@ public class GameManager : MonoBehaviour
 
     public void SpawnTank ()
     {
-        //Spawn tank after getting all the possible spawn points
-        int randomIndex = UnityEngine.Random.Range(0, spawners.Count);
-        GameObject Point = spawners[randomIndex]; 
-        PlayerSpawn spawnPoint = Point.GetComponent<PlayerSpawn>();
-        spawnPoint.SpawnTank();
+        if (spawners.Count == 0)
+        {
+            Debug.Log("Theres no spawners");
+        }
+        else
+        {
+            //Spawn tank after getting all the possible spawn points
+            int randomIndex = UnityEngine.Random.Range(0, spawners.Count);
+            GameObject Point = spawners[randomIndex]; 
+            PlayerSpawn spawnPoint = Point.GetComponent<PlayerSpawn>();
+            spawnPoint.SpawnTank();
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (player)
+        if (player == null)
+        {
+            SpawnTank();
+            LookforPlayer();
+            Debug.Log("Player dead");
+        }
 
         if (enemies.Count == 0)
         {

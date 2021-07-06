@@ -40,10 +40,6 @@ public class FSM_Stalker : MonoBehaviour
     // Variable to know distance between player in a float format rather than vector 3
     private float playerDistance;
 
-    // Variable for the game manager
-    public GameObject gameManagerObject;
-    public GameManager gameManager;
-
     void Awake()
     {
         motor = gameObject.GetComponent<TankMotor>();
@@ -55,14 +51,17 @@ public class FSM_Stalker : MonoBehaviour
 
     void Start ()
     {
-        gameManagerObject = GameObject.Find("GameManager");
-        gameManager = gameManagerObject.GetComponent<GameManager>();
-        target = gameManager.player.transform;
+        target = GameManager.instance.player.transform;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (target == null)
+        {
+            target = GameManager.instance.player.transform;
+        }
+        
         switch (aiState)
         {
             case AIState.Pursue:
