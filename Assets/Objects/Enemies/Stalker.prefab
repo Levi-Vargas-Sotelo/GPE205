@@ -1,0 +1,181 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2002120609
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2002120610}
+  m_Layer: 0
+  m_Name: Cannon Enemy
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2002120610
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2002120609}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.25, z: 0.7}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 6367230548929313802}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2123382882
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6367230548929536042}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 892dae8d78d121944b3f9957b4226384, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  aiState: 0
+  aiSenseRadius: 10
+  target: {fileID: 0}
+  avoidanceTime: 2
+  fleeTime: 5
+  HealingTime: 1
+  fleeDistance: 1
+  gameManagerObject: {fileID: 0}
+  gameManager: {fileID: 0}
+--- !u!114 &2123382887
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6367230548929536042}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4ef886ab58deec4dab5057803c53737, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  powerups: []
+--- !u!1001 &6367230548929439366
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 100012, guid: 6cfb6beb12235f24388fd5dd45041543, type: 3}
+      propertyPath: m_Name
+      value: Stalker
+      objectReference: {fileID: 0}
+    - target: {fileID: 100012, guid: 6cfb6beb12235f24388fd5dd45041543, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 100012, guid: 6cfb6beb12235f24388fd5dd45041543, type: 3}
+      propertyPath: m_TagString
+      value: Tank
+      objectReference: {fileID: 0}
+    - target: {fileID: 100014, guid: 6cfb6beb12235f24388fd5dd45041543, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
+      objectReference: {fileID: 0}
+    - target: {fileID: 400012, guid: 6cfb6beb12235f24388fd5dd45041543, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400012, guid: 6cfb6beb12235f24388fd5dd45041543, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 5.88
+      objectReference: {fileID: 0}
+    - target: {fileID: 400012, guid: 6cfb6beb12235f24388fd5dd45041543, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 400012, guid: 6cfb6beb12235f24388fd5dd45041543, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 400012, guid: 6cfb6beb12235f24388fd5dd45041543, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 400012, guid: 6cfb6beb12235f24388fd5dd45041543, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400012, guid: 6cfb6beb12235f24388fd5dd45041543, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400012, guid: 6cfb6beb12235f24388fd5dd45041543, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400012, guid: 6cfb6beb12235f24388fd5dd45041543, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400012, guid: 6cfb6beb12235f24388fd5dd45041543, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400012, guid: 6cfb6beb12235f24388fd5dd45041543, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2047618414, guid: 6cfb6beb12235f24388fd5dd45041543, type: 3}
+      propertyPath: Bullet
+      value: 
+      objectReference: {fileID: 2194490622271309832, guid: 3504a835831eb2e4ebd3b67aaaf6b3fc, type: 3}
+    - target: {fileID: 2047618414, guid: 6cfb6beb12235f24388fd5dd45041543, type: 3}
+      propertyPath: Cannon
+      value: 
+      objectReference: {fileID: 2002120609}
+    - target: {fileID: 2047618415, guid: 6cfb6beb12235f24388fd5dd45041543, type: 3}
+      propertyPath: health
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2047618415, guid: 6cfb6beb12235f24388fd5dd45041543, type: 3}
+      propertyPath: fireRate
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2047618415, guid: 6cfb6beb12235f24388fd5dd45041543, type: 3}
+      propertyPath: maxHealth
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2047618415, guid: 6cfb6beb12235f24388fd5dd45041543, type: 3}
+      propertyPath: moveSpeed
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2047618415, guid: 6cfb6beb12235f24388fd5dd45041543, type: 3}
+      propertyPath: shootDelay
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2047618415, guid: 6cfb6beb12235f24388fd5dd45041543, type: 3}
+      propertyPath: shootForce
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 2047618415, guid: 6cfb6beb12235f24388fd5dd45041543, type: 3}
+      propertyPath: bulletDamage
+      value: 2
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 6cfb6beb12235f24388fd5dd45041543, type: 3}
+--- !u!1 &6367230548929536042 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 100012, guid: 6cfb6beb12235f24388fd5dd45041543, type: 3}
+  m_PrefabInstance: {fileID: 6367230548929439366}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &6367230548929313802 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 400012, guid: 6cfb6beb12235f24388fd5dd45041543, type: 3}
+  m_PrefabInstance: {fileID: 6367230548929439366}
+  m_PrefabAsset: {fileID: 0}

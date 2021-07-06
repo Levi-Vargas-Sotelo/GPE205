@@ -36,6 +36,13 @@ public class FSM_Patrol : MonoBehaviour
     // Variable to know distance between player in a float format rather than vector 3
     private float playerDistance;
 
+    // Variable for the game manager
+    public GameObject gameManagerObject;
+    public GameManager gameManager;
+
+    // Prefab for the waypoint to spawn
+    public GameObject Waypoints;
+
     // Awake is called when the GameObject is initialized
     void Awake()
     {
@@ -49,7 +56,11 @@ public class FSM_Patrol : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        gameManagerObject = GameObject.Find("GameManager");
+        gameManager = gameManagerObject.GetComponent<GameManager>();
+        target = gameManager.player.transform;
+
+        Waypoints.transform.parent = null;        
     }
 
     // Update is called once per frame

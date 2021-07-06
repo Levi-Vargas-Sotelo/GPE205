@@ -41,6 +41,10 @@ public class FSM_Sniper : MonoBehaviour
     // How much the tank flees
     public float fleeDistance = 1.0f;
 
+    // Variable for the game manager
+    public GameObject gameManagerObject;
+    public GameManager gameManager;
+
     void Awake()
     {
         motor = gameObject.GetComponent<TankMotor>();
@@ -48,6 +52,15 @@ public class FSM_Sniper : MonoBehaviour
         tf = gameObject.GetComponent<Transform>();
         motor.bStrenght = data.shootForce;
         motor.bDamage = data.bulletDamage;
+
+        
+    }
+
+    void Start ()
+    {
+        gameManagerObject = GameObject.Find("GameManager");
+        gameManager = gameManagerObject.GetComponent<GameManager>();
+        target = gameManager.player.transform;
     }
 
     // Update is called once per frame

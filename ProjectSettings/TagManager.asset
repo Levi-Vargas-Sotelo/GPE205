@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Tank
   - Projectile
+  - Pickup
+  - Spawner
   layers:
   - Default
   - TransparentFX
