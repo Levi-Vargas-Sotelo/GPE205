@@ -49,7 +49,7 @@ public class FSM_Sniper : MonoBehaviour
         motor.bStrenght = data.shootForce;
         motor.bDamage = data.bulletDamage;
 
-        
+        GameManager.instance.enemies.Add(this.gameObject);
     }
 
     void Start ()
@@ -244,5 +244,10 @@ public class FSM_Sniper : MonoBehaviour
     {
         // Change our state
         aiState = newState;
+    }
+
+    void OnDestroy()
+    {
+        GameManager.instance.enemies.Remove(this.gameObject);
     }
 }

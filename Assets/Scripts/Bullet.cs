@@ -36,7 +36,12 @@ public class Bullet : MonoBehaviour
         {
             // If it does, then damage it accordingly and destroy bullet
             TankData otherTank = other.gameObject.GetComponent<TankData>();
+            TankData shooterTank = shooter.gameObject.GetComponent<TankData>();
             otherTank.health -= bulletDamage;
+            if(otherTank.health <= 0)
+            {
+                shooterTank.Score += otherTank.pointsToGive;
+            }
             Destroy(gameObject);
         }
 

@@ -12,6 +12,11 @@ public class Pickup : MonoBehaviour
 
     public Transform tf;
 
+    void Awake ()
+    {
+        GameManager.instance.powerups.Add(this.gameObject);    
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -44,5 +49,10 @@ public class Pickup : MonoBehaviour
             // After adding the object is destroyed
             Destroy (gameObject);
         }
+    }
+
+    void OnDestroy()
+    {
+        GameManager.instance.powerups.Remove(this.gameObject);
     }
 }

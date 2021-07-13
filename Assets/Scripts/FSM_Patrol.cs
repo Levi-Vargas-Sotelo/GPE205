@@ -47,6 +47,8 @@ public class FSM_Patrol : MonoBehaviour
         tf = gameObject.GetComponent<Transform>();
         motor.bStrenght = data.shootForce;
         motor.bDamage = data.bulletDamage;
+
+        GameManager.instance.enemies.Add(this.gameObject);
     }
 
     // Start is called before the first frame update
@@ -165,5 +167,10 @@ public class FSM_Patrol : MonoBehaviour
     {
         // Change our state
         aiState = newState;
+    }
+
+    void OnDestroy()
+    {
+        GameManager.instance.enemies.Remove(this.gameObject);
     }
 }

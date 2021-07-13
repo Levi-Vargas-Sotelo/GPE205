@@ -41,6 +41,8 @@ public class InputController : MonoBehaviour
         motor.bDamage = data.bulletDamage;
 
         GameManager.instance.player = this.gameObject;
+
+        GameManager.instance.playersList.Add(this.gameObject);
     }
 
     // Update is called once per frame
@@ -115,5 +117,10 @@ public class InputController : MonoBehaviour
             // set delay back to the data
             delay = data.shootDelay;
         }
+    }
+
+    void OnDestroy()
+    {
+        GameManager.instance.playersList.Remove(this.gameObject);
     }
 }

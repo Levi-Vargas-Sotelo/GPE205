@@ -47,6 +47,8 @@ public class FSM_Stalker : MonoBehaviour
         tf = gameObject.GetComponent<Transform>();
         motor.bStrenght = data.shootForce;
         motor.bDamage = data.bulletDamage;  
+
+        GameManager.instance.enemies.Add(this.gameObject);
     }
 
     void Start ()
@@ -265,5 +267,10 @@ public class FSM_Stalker : MonoBehaviour
     {
         // Change our state
         aiState = newState;
+    }
+
+    void OnDestroy()
+    {
+        GameManager.instance.enemies.Remove(this.gameObject);
     }
 }

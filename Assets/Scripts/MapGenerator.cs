@@ -46,6 +46,7 @@ public class MapGenerator : MonoBehaviour
         } 
         else 
         {
+            mapSeed = DateToInt (DateTime.Now);
             // Creates the grid for the map at start of the game
             GenerateGrid ();
         }
