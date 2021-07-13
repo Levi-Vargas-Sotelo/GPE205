@@ -10,11 +10,15 @@ public class InputController : MonoBehaviour
     // Have a variable to see in the inspector to use the enumerator and use that control scheme
     public InputScheme input = InputScheme.WASD;
 
+    public GameObject tankPlayer;
+
     // Variable for the tank motor script
-    private TankMotor motor;
+    public TankMotor motor;
 
     // Variable for the tank data script
-    private TankData data;
+    public TankData data;
+
+    public float playerLives;
 
     // Var to check if we can shoot
     public bool canShoot = true;
@@ -26,14 +30,20 @@ public class InputController : MonoBehaviour
     // Awake is called when the GameObject is initialized 
     void Awake()
     {
+        
+        /*
         // Assign both variables the respective scripts they should reference
         motor = gameObject.GetComponent<TankMotor>();
         data = gameObject.GetComponent<TankData>();
         delay = data.shootDelay;
+        */
     }
 
     void Start()
     {
+        //motor = tankPlayer.GetComponent<TankMotor>();
+        //data = tankPlayer.GetComponent<TankData>();
+
         // stating when we can shoot again
         nextEventTime = Time.time + delay;
 
@@ -43,6 +53,13 @@ public class InputController : MonoBehaviour
         GameManager.instance.player = this.gameObject;
 
         GameManager.instance.playersList.Add(this.gameObject);
+    }
+
+    public void GetPlayerTank (GameObject thisPlayer)
+    {
+        //tankPlayer = thisPlayer;
+        motor = thisPlayer.GetComponent<TankMotor>();
+        data = thisPlayer.GetComponent<TankData>();
     }
 
     // Update is called once per frame

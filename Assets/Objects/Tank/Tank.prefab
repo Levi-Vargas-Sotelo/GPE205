@@ -351,7 +351,6 @@ GameObject:
   - component: {fileID: 14300000}
   - component: {fileID: 2054876878}
   - component: {fileID: 2054876877}
-  - component: {fileID: 2054876876}
   - component: {fileID: 3721507408705809696}
   m_Layer: 0
   m_Name: Tank
@@ -433,21 +432,6 @@ MonoBehaviour:
   Score: 0
   pointsToGive: 100
   fireRate: 1
---- !u!114 &2054876876
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 100012}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 96bf845b33264cf4dbd42cee91c85785, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  input: 0
-  canShoot: 1
-  delay: 0
 --- !u!114 &3721507408705809696
 MonoBehaviour:
   m_ObjectHideFlags: 0

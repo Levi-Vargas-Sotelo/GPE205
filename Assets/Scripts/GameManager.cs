@@ -11,6 +11,8 @@ public class GameManager : MonoBehaviour
     // Get the player game object
     public GameObject player;
     private TankData playerData;
+    public GameObject playerController;
+    public InputController inputCont;
 
     public float playerScore;
 
@@ -100,6 +102,7 @@ public class GameManager : MonoBehaviour
         gameStart = true;
 
         GiveCamera (player);
+        SetController (player);
     }
 
     public void LookforPlayer ()
@@ -130,14 +133,24 @@ public class GameManager : MonoBehaviour
             GameObject Point = spawners[randomIndex]; 
             PlayerSpawn spawnPoint = Point.GetComponent<PlayerSpawn>();
             spawnPoint.SpawnTank();
+            
         }
     }
 
     public void GiveCamera (GameObject tank)
     {
+        // Spawns a camera object and then grabs the tank and inserts it into the camera controller script
         playerCam = Instantiate (playerCam) as GameObject;
         CameraController camCont = playerCam.GetComponent<CameraController>();
         camCont.player = tank;
+        // Spawns the player controller and references the tanks components as it needs them
+    }
+
+    public void SetController (GameObject tank)
+    {
+        playerController = Instantiate (playerController) as GameObject;
+        InputController inpcont = playerController.GetComponent<InputController>();
+        inpcont.GetPlayerTank(tank);
     }
 
     // Update is called once per frame
