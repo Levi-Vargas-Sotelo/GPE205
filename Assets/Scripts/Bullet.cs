@@ -15,6 +15,8 @@ public class Bullet : MonoBehaviour
     //references the tank that shot the bullet
     public GameObject shooter; 
 
+    public AudioClip hit;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -38,6 +40,7 @@ public class Bullet : MonoBehaviour
             TankData otherTank = other.gameObject.GetComponent<TankData>();
             TankData shooterTank = shooter.gameObject.GetComponent<TankData>();
             otherTank.health -= bulletDamage;
+            AudioSource.PlayClipAtPoint(hit, this.transform.position, GameManager.instance.sFX);
             if(otherTank.health <= 0)
             {
                 shooterTank.Score += otherTank.pointsToGive;

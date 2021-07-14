@@ -97,6 +97,7 @@ MonoBehaviour:
   bulletDamage: 1
   destroyTime: 1.5
   shooter: {fileID: 0}
+  hit: {fileID: 8300000, guid: 8f70925594b311042a84494b9b99e6ff, type: 3}
 --- !u!136 &9158044625082682997
 CapsuleCollider:
   m_ObjectHideFlags: 0

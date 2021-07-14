@@ -297,6 +297,10 @@ PrefabInstance:
       propertyPath: m_RootOrder
       value: 24
       objectReference: {fileID: 0}
+    - target: {fileID: 4377136622030433458, guid: 41d4243be8ad3a5409422171976de7ff, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 18
+      objectReference: {fileID: 0}
     - target: {fileID: 4377136622030433459, guid: 41d4243be8ad3a5409422171976de7ff, type: 3}
       propertyPath: tankSeed
       value: 6

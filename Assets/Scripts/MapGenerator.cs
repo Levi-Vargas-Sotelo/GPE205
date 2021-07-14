@@ -5,6 +5,8 @@ using System;
 
 public class MapGenerator : MonoBehaviour
 {
+    public static MapGenerator instance;
+    
     // Variables to know the size of the grid of tile rooms we are making
     public int rows;
     public int cols;

@@ -31,6 +31,8 @@ public class TankData : MonoBehaviour
 
     public float fireRate = 1;
 
+    public AudioClip deathSound;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -42,6 +44,7 @@ public class TankData : MonoBehaviour
     {
         if (health <= 0)
         {
+            AudioSource.PlayClipAtPoint(deathSound, this.transform.position, GameManager.instance.sFX);
             Destroy(gameObject);
         }
     }

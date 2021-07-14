@@ -21,6 +21,8 @@ public class TankMotor : MonoBehaviour
     // To reference the strenght from the data
     public float bStrenght;
 
+    public AudioClip bulletsound;
+
     
     // Awake is called when the GameObject is initialized 
     public void Awake() 
@@ -78,6 +80,7 @@ public class TankMotor : MonoBehaviour
         //instantiate bullet at cannon position
         GameObject myBullet = Instantiate (Bullet, Cannon.transform.position, Cannon.transform.rotation) as GameObject;
         Bullet bulletData = myBullet.GetComponent<Bullet>();
+        AudioSource.PlayClipAtPoint(bulletsound, this.transform.position, GameManager.instance.sFX);
         // make the bullet reference the tank that shot it
         bulletData.shooter = this.gameObject;
         // make the bullet get the data from the tank

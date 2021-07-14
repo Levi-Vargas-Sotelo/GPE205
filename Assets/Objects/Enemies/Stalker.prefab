@@ -49,8 +49,6 @@ MonoBehaviour:
   fleeTime: 5
   HealingTime: 1
   fleeDistance: 1
-  gameManagerObject: {fileID: 0}
-  gameManager: {fileID: 0}
 --- !u!114 &2123382887
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -139,6 +137,10 @@ PrefabInstance:
       propertyPath: Cannon
       value: 
       objectReference: {fileID: 2002120609}
+    - target: {fileID: 2047618414, guid: 6cfb6beb12235f24388fd5dd45041543, type: 3}
+      propertyPath: bulletsound
+      value: 
+      objectReference: {fileID: 8300000, guid: 55d55e348379ec34c9439ff50de14ce2, type: 3}
     - target: {fileID: 2047618415, guid: 6cfb6beb12235f24388fd5dd45041543, type: 3}
       propertyPath: health
       value: 4
@@ -155,6 +157,10 @@ PrefabInstance:
       propertyPath: moveSpeed
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 2047618415, guid: 6cfb6beb12235f24388fd5dd45041543, type: 3}
+      propertyPath: deathSound
+      value: 
+      objectReference: {fileID: 8300000, guid: d91457be8bd9f7e43af96b8fa8aad5f3, type: 3}
     - target: {fileID: 2047618415, guid: 6cfb6beb12235f24388fd5dd45041543, type: 3}
       propertyPath: shootDelay
       value: 1

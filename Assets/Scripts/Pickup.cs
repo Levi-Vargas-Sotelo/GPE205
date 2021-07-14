@@ -43,7 +43,7 @@ public class Pickup : MonoBehaviour
             // Play the sound clip if there is one attached, if not then it will not play anything
             if (feedback != null) 
             {
-                AudioSource.PlayClipAtPoint(feedback, tf.position, 5.0f);
+                AudioSource.PlayClipAtPoint(feedback, this.transform.position, GameManager.instance.sFX);
             }
 
             // After adding the object is destroyed

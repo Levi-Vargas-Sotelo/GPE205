@@ -410,6 +410,7 @@ MonoBehaviour:
   Bullet: {fileID: 2194490622271309832, guid: 3504a835831eb2e4ebd3b67aaaf6b3fc, type: 3}
   bDamage: 0
   bStrenght: 0
+  bulletsound: {fileID: 8300000, guid: 55d55e348379ec34c9439ff50de14ce2, type: 3}
 --- !u!114 &2054876877
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -432,6 +433,7 @@ MonoBehaviour:
   Score: 0
   pointsToGive: 100
   fireRate: 1
+  deathSound: {fileID: 8300000, guid: d91457be8bd9f7e43af96b8fa8aad5f3, type: 3}
 --- !u!114 &3721507408705809696
 MonoBehaviour:
   m_ObjectHideFlags: 0

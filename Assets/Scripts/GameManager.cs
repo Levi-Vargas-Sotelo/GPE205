@@ -31,6 +31,11 @@ public class GameManager : MonoBehaviour
     public GameObject mapGenObject;
     public MapGenerator mapGen;
 
+    // Menu variable to reference the functions from it
+    public Menus menus;
+    public float music;
+    public float sFX;
+
     // Enemies list
     public List<GameObject> enemies;
 
@@ -176,6 +181,9 @@ public class GameManager : MonoBehaviour
                 
             }
         }
+
+        sFX = menus.sFXVolume;
+        music = menus.musicVolume;
     }
 
     public GameObject RandomSpawnPoint () 
