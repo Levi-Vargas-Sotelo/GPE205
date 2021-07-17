@@ -40,12 +40,13 @@ public class SaveManager : MonoBehaviour
 
     public void Save () 
     {
-        
+        PlayerPrefs.SetString ("TextData", textToSave.text);
         PlayerPrefs.Save ();
     }
 
     public void Load ()
     {
+        textToSave.text = PlayerPrefs.GetString ("TextData");
         //GameManager.instance.menus.musicVolume = PlayerPrefs.GetFloat ("Vol");
         //GameManager.instance.menus.sFXVolume = PlayerPrefs.GetFloat ("SFX");
     }

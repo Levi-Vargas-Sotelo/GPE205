@@ -502,7 +502,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: sus
+  m_Text: other text
 --- !u!222 &1003023388
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -755,6 +755,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   textToSave: {fileID: 1003023387}
+  scores: {fileID: 0}
 --- !u!4 &1511740241
 Transform:
   m_ObjectHideFlags: 0

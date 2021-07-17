@@ -121,74 +121,77 @@ public class InputController : MonoBehaviour
             }
         }
 
-        // Check what the input is set to
-        switch (input) 
+        if (GameManager.instance.gameStart)
         {
-            // If the input is set to arrow keys then do this code
-            case InputScheme.arrowKeys:
-                // All of these are for moving the tank according to the direction and using the values from the tank data
-                if (Input.GetKey(KeyCode.UpArrow))
-                {
-                    motor.Move(data.moveSpeed);
-                }
-                if (Input.GetKey(KeyCode.DownArrow))
-                {
-                    motor.Move(-data.moveSpeed);
-                }
-                if (Input.GetKey(KeyCode.RightArrow))
-                {
-                    motor.Rotate(data.turnSpeed);
-                }
-                if (Input.GetKey(KeyCode.LeftArrow))
-                {
-                    motor.Rotate(-data.turnSpeed);
-                }
-            break;
-
-            // If the input is set to WASD keys then do this code
-            case InputScheme.WASD:
-                // All of these are for moving the tank according to the direction and using the values from the tank data
-                if (Input.GetKey(KeyCode.W))
-                {
-                    motor.Move(data.moveSpeed);
-                }
-                if (Input.GetKey(KeyCode.S))
-                {
-                    motor.Move(-data.moveSpeed);
-                }
-                if (Input.GetKey(KeyCode.D))
-                {
-                    motor.Rotate(data.turnSpeed);
-                }
-                if (Input.GetKey(KeyCode.A))
-                {
-                    motor.Rotate(-data.turnSpeed);
-                }
-            break;
-        }
-
-        // Shooting input
-        if (Input.GetKey(KeyCode.Space))
-        {
-            // if we can shoot...
-            if (canShoot) 
+            // Check what the input is set to
+            switch (input) 
             {
-                // we shoot
-                motor.Shoot(data.shootForce);
-                // and we cant shoot anymore
-                canShoot = false;
-            }
-        }
+                // If the input is set to arrow keys then do this code
+                case InputScheme.arrowKeys:
+                    // All of these are for moving the tank according to the direction and using the values from the tank data
+                    if (Input.GetKey(KeyCode.UpArrow))
+                    {
+                        motor.Move(data.moveSpeed);
+                    }
+                    if (Input.GetKey(KeyCode.DownArrow))
+                    {
+                        motor.Move(-data.moveSpeed);
+                    }
+                    if (Input.GetKey(KeyCode.RightArrow))
+                    {
+                        motor.Rotate(data.turnSpeed);
+                    }
+                    if (Input.GetKey(KeyCode.LeftArrow))
+                    {
+                        motor.Rotate(-data.turnSpeed);
+                    }
+                break;
 
-        // shoot delay
-        delay -= Time.deltaTime;
-        // if the delay is over
-        if (delay <= 0) 
-        {
-            // we can shoot again
-            canShoot = true;
-            // set delay back to the data
-            delay = data.shootDelay;
+                // If the input is set to WASD keys then do this code
+                case InputScheme.WASD:
+                    // All of these are for moving the tank according to the direction and using the values from the tank data
+                    if (Input.GetKey(KeyCode.W))
+                    {
+                        motor.Move(data.moveSpeed);
+                    }
+                    if (Input.GetKey(KeyCode.S))
+                    {
+                        motor.Move(-data.moveSpeed);
+                    }
+                    if (Input.GetKey(KeyCode.D))
+                    {
+                        motor.Rotate(data.turnSpeed);
+                    }
+                    if (Input.GetKey(KeyCode.A))
+                    {
+                        motor.Rotate(-data.turnSpeed);
+                    }
+                break;
+            }
+
+            // Shooting input
+            if (Input.GetKey(KeyCode.Space))
+            {
+                // if we can shoot...
+                if (canShoot) 
+                {
+                    // we shoot
+                    motor.Shoot(data.shootForce);
+                    // and we cant shoot anymore
+                    canShoot = false;
+                }
+            }
+
+            // shoot delay
+            delay -= Time.deltaTime;
+            // if the delay is over
+            if (delay <= 0) 
+            {
+                // we can shoot again
+                canShoot = true;
+                // set delay back to the data
+                delay = data.shootDelay;
+            }
         }
     }
 

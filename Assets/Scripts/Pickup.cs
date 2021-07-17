@@ -53,7 +53,7 @@ public class Pickup : MonoBehaviour
         }
     }
 
-    public void SpriteMask ()
+    public void Spark ()
     {
         sparks = Instantiate (sparks, this.transform, this) as GameObject;
     }
