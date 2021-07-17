@@ -14,7 +14,7 @@ public class PlayerSpawn : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //SpawnTank();
+        GameManager.instance.spawners.Add(this.gameObject);
     }
 
     // Update is called once per frame
@@ -23,10 +23,17 @@ public class PlayerSpawn : MonoBehaviour
         
     }
 
-    public void SpawnTank ()
+    public void SpawnTank (InputController playerControllerWhoSpawnedTank)
     {
         // Spawn player
         GameObject player = Instantiate (Player,transform.position,Quaternion.identity) as GameObject;
-        GameManager.instance.LookforPlayer();
+        //GameManager.instance.LookforPlayer();
+        playerControllerWhoSpawnedTank.tankPlayer = player;
     }
+
+    void OnDestroy()
+    {
+        GameManager.instance.spawners.Remove(this.gameObject);
+    }
+
 }

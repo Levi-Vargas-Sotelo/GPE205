@@ -7,22 +7,44 @@ public class CameraController : MonoBehaviour
     public GameObject player;
     public Vector3 offset;
 
+    public InputController playerController;
+
     // Start is called before the first frame update
     void Start()
     {
         
     }
 
-    // Update is called once per frame
-    void LateUpdate()
+    void Update()
     {
-        if (player == null)
+        if (playerController != null)
         {
-            Debug.Log("Theres no camera target");
+            player = playerController.tankPlayer;  
         }
         else
         {
-            transform.position = player.transform.position + offset;
-        }        
+            Debug.Log("Theres no player controller");
+        }
+    }
+
+    // Update is called once per frame
+    void LateUpdate()
+    {
+        if (GameManager.instance.gameStart)
+        {
+            if (player == null)
+            {
+                Debug.Log("Theres no camera target");
+            }
+            else
+            {
+                transform.position = player.transform.position + offset;
+            }   
+        }     
+    }
+
+    public void GetCameraFromController (GameObject tankToFollow)
+    {
+        player = tankToFollow;
     }
 }

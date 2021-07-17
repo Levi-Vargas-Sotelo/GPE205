@@ -12,6 +12,8 @@ public class Pickup : MonoBehaviour
 
     public Transform tf;
 
+    public GameObject sparks;
+
     void Awake ()
     {
         GameManager.instance.powerups.Add(this.gameObject);    
@@ -49,6 +51,11 @@ public class Pickup : MonoBehaviour
             // After adding the object is destroyed
             Destroy (gameObject);
         }
+    }
+
+    public void SpriteMask ()
+    {
+        sparks = Instantiate (sparks, this.transform, this) as GameObject;
     }
 
     void OnDestroy()

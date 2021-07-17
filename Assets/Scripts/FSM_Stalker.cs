@@ -40,6 +40,8 @@ public class FSM_Stalker : MonoBehaviour
     // Variable to know distance between player in a float format rather than vector 3
     private float playerDistance;
 
+    public DetectPlayer sensePlayer;
+
     void Awake()
     {
         motor = gameObject.GetComponent<TankMotor>();
@@ -53,85 +55,92 @@ public class FSM_Stalker : MonoBehaviour
 
     void Start ()
     {
-        target = GameManager.instance.player.transform;
+        
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (target == null)
-        {
-            target = GameManager.instance.player.transform;
-        }
+        target = sensePlayer.playerTank;
+
+        
         
         switch (aiState)
         {
             case AIState.Pursue:
-                CheckPlayerDistance ();
-
-                // If we are avoiding
-                if (avoidanceStage != 0) 
+                if (target != null)
                 {
-                    DoAvoidance();
-                } else 
-                {
-                    DoChase();
+                    CheckPlayerDistance ();
 
-                    // Shoot according to the firing rate we set
-                    if (Time.time > lastShootTime + data.fireRate) 
+                    // If we are avoiding
+                    if (avoidanceStage != 0) 
                     {
-                        motor.Shoot(data.shootForce);
-                        lastShootTime = Time.time;
+                        DoAvoidance();
+                    } else 
+                    {
+                        DoChase();
+
+                        // Shoot according to the firing rate we set
+                        if (Time.time > lastShootTime + data.fireRate) 
+                        {
+                            motor.Shoot(data.shootForce);
+                            lastShootTime = Time.time;
+                        }
+                    }
+
+                    // If tank is damaged
+                    if (data.health < data.maxHealth) 
+                    {   
+                        // Retreat
+                        ChangeState(AIState.Retreat);
+                    } 
+                    // If the player is far away from the sense radius
+                    else if (playerDistance <= aiSenseRadius) 
+                    {
+                        ChangeState(AIState.Pursue);
                     }
                 }
-
-                // If tank is damaged
-                if (data.health < data.maxHealth) 
-                {   
-                    // Retreat
-                    ChangeState(AIState.Retreat);
-                } 
-                // If the player is far away from the sense radius
-                else if (playerDistance <= aiSenseRadius) 
-                {
-                    ChangeState(AIState.Pursue);
-                }
-
             break;
             
             case AIState.Retreat:
-                // Start fleeing timer
-                lastFleeTime -= Time.deltaTime;
+                if (target != null)
+                {
+                    // Start fleeing timer
+                    lastFleeTime -= Time.deltaTime;
 
-                // Flee and avoid
-                if (avoidanceStage != 0) 
-                {
-                    DoAvoidance();
-                } else 
-                {
-                    Flee();
-                }
+                    // Flee and avoid
+                    if (avoidanceStage != 0) 
+                    {
+                        DoAvoidance();
+                    } else 
+                    {
+                        Flee();
+                    }
 
-                if (lastFleeTime <= 0)
-                {
-                    lastFleeTime = fleeTime;
-                    ChangeState (AIState.Heal);
+                    if (lastFleeTime <= 0)
+                    {
+                        lastFleeTime = fleeTime;
+                        ChangeState (AIState.Heal);
+                    }
                 }
             break;
 
             case AIState.Heal:
                 // Perform Behaviors
                 DoRest();
-
-                // See if the player is far enough so tank can heal
-                if (Vector3.Distance (target.position, tf.position) <= aiSenseRadius) 
+                
+                if (target != null)
                 {
-                    ChangeState(AIState.Retreat);
-                }
-                // If health was regained, then chase again
-                else if (data.health >= data.maxHealth) 
-                {
-                    ChangeState(AIState.Pursue);
+                    // See if the player is far enough so tank can heal
+                    if (Vector3.Distance (target.position, tf.position) <= aiSenseRadius) 
+                    {
+                        ChangeState(AIState.Retreat);
+                    }
+                    // If health was regained, then chase again
+                    else if (data.health >= data.maxHealth) 
+                    {
+                        ChangeState(AIState.Pursue);
+                    }
                 }
             break;
         }
@@ -139,17 +148,20 @@ public class FSM_Stalker : MonoBehaviour
 
     void DoChase () 
     {
-        // Spin towards the target
-        motor.RotateTowards(target.position, data.turnSpeed);
-        // See if we can move to this object using the tank's normal speed
-        if (CanMove (data.moveSpeed)) 
+        if (target != null) 
         {
-            // If it can then move to it
-            motor.Move (data.moveSpeed);
-        } else 
-        {
-            // If it can not, then start avoiding the obstacle
-            avoidanceStage = 1;
+            // Spin towards the target
+            motor.RotateTowards(target.position, data.turnSpeed);
+            // See if we can move to this object using the tank's normal speed
+            if (CanMove (data.moveSpeed)) 
+            {
+                // If it can then move to it
+                motor.Move (data.moveSpeed);
+            } else 
+            {
+                // If it can not, then start avoiding the obstacle
+                avoidanceStage = 1;
+            }
         }
     }
 
@@ -226,40 +238,46 @@ public class FSM_Stalker : MonoBehaviour
 
     void Flee () 
     {
-        // We subtract the position of the player from the tank position to know the distance between them and store it in a Vector3 variable
-        Vector3 vectorToTarget = target.position - tf.position;
-
-        // We multiply that vector by negative 1 to make it the exact opposite 
-        Vector3 vectorAwayFromTarget = -1 * vectorToTarget;
-
-        // We normalize the vector which will make it one unit exactly
-        vectorAwayFromTarget.Normalize ();
-
-        // Since it is normalized now we can easily mutliply it by any number we want to make it the distance we want it to flee
-         vectorAwayFromTarget *= fleeDistance;
-
-        // We find a vector by adding the tank position and the previous vector we got to find a point to flee to
-        Vector3 fleePosition = vectorAwayFromTarget + tf.position;
-
-        // We pass that data to the motor and move to that point
-        motor.RotateTowards( fleePosition, data.turnSpeed );
-        motor.Move (data.moveSpeed);
-
-        if (CanMove (data.moveSpeed)) 
+        if (target != null)
         {
-            // If it can then move to it
+            // We subtract the position of the player from the tank position to know the distance between them and store it in a Vector3 variable
+            Vector3 vectorToTarget = target.position - tf.position;
+
+            // We multiply that vector by negative 1 to make it the exact opposite 
+            Vector3 vectorAwayFromTarget = -1 * vectorToTarget;
+
+            // We normalize the vector which will make it one unit exactly
+            vectorAwayFromTarget.Normalize ();
+
+            // Since it is normalized now we can easily mutliply it by any number we want to make it the distance we want it to flee
+            vectorAwayFromTarget *= fleeDistance;
+
+            // We find a vector by adding the tank position and the previous vector we got to find a point to flee to
+            Vector3 fleePosition = vectorAwayFromTarget + tf.position;
+
+            // We pass that data to the motor and move to that point
+            motor.RotateTowards( fleePosition, data.turnSpeed );
             motor.Move (data.moveSpeed);
-        } else 
-        {
-            // If it can not, then start avoiding the obstacle
-            avoidanceStage = 1;
+
+            if (CanMove (data.moveSpeed)) 
+            {
+                // If it can then move to it
+                motor.Move (data.moveSpeed);
+            } else 
+            {
+                // If it can not, then start avoiding the obstacle
+                avoidanceStage = 1;
+            }
         }
     }
 
     void CheckPlayerDistance ()
     {
-        float distanceFromPlayer = Vector3.Distance (tf.transform.position, target.transform.position);
-        playerDistance = distanceFromPlayer;
+        if (target != null)
+        {
+            float distanceFromPlayer = Vector3.Distance (tf.transform.position, target.transform.position);
+            playerDistance = distanceFromPlayer;
+        }
     }
 
     // Change to a new state using this function

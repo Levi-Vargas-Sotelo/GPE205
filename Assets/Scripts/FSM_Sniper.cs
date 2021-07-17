@@ -41,6 +41,8 @@ public class FSM_Sniper : MonoBehaviour
     // How much the tank flees
     public float fleeDistance = 1.0f;
 
+    public DetectPlayer sensePlayer;
+
     void Awake()
     {
         motor = gameObject.GetComponent<TankMotor>();
@@ -54,65 +56,73 @@ public class FSM_Sniper : MonoBehaviour
 
     void Start ()
     {
-        target = GameManager.instance.player.transform;
+        
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (target == null)
-        {
-            target = GameManager.instance.player.transform;
-        }
+        target = sensePlayer.playerTank;
+
+        
 
         switch (aiState)
         {
             case AIState.Shooting:
-                CheckPlayerDistance ();
+                if (target != null)
+                    {
+                    CheckPlayerDistance ();
 
-                Shooting ();
+                    Shooting ();
 
-                if (playerDistance <= aiSenseRadius)
-                {
-                    ChangeState (AIState.Retreat);
-                }
-                else if (playerDistance >= playerFarAway)
-                {
-                    ChangeState (AIState.Approach);
+                    if (playerDistance <= aiSenseRadius)
+                    {
+                        ChangeState (AIState.Retreat);
+                    }
+                    else if (playerDistance >= playerFarAway)
+                    {
+                        ChangeState (AIState.Approach);
+                    }
                 }
             break;
 
             case AIState.Approach: 
-                CheckPlayerDistance ();
-                
-                if (avoidanceStage != 0) 
+                if (target != null)
                 {
-                    DoAvoidance();
-                } else 
-                {
-                Chase ();
-                }
+                    CheckPlayerDistance ();
+                    
+                    if (avoidanceStage != 0) 
+                    {
+                        DoAvoidance();
+                    } else 
+                    {
+                    Chase ();
+                    }
 
-                if (playerDistance <= playerFarAway)
-                {
-                    ChangeState (AIState.Shooting);
+                    if (playerDistance <= playerFarAway)
+                    {
+                        ChangeState (AIState.Shooting);
+                    }
                 }
             break;
             
             case AIState.Retreat:
-                CheckPlayerDistance ();
+                if (target != null)
+                {
+                    CheckPlayerDistance ();
 
-                if (avoidanceStage != 0) 
-                {
-                    DoAvoidance();
-                } else 
-                {
-                Flee ();
-                }
+                    if (avoidanceStage != 0) 
+                    {
+                        DoAvoidance();
+                    } else 
+                    {
+                    Flee ();
+                    }
 
-                if (playerDistance >= aiSenseRadius)
-                {
-                    ChangeState (AIState.Shooting);
+                    if (playerDistance >= aiSenseRadius)
+                    {
+                        ChangeState (AIState.Shooting);
+                    }
                 }
             break;
         }
@@ -120,54 +130,63 @@ public class FSM_Sniper : MonoBehaviour
 
     void Shooting ()
     {
-        // Spin towards the target
-        motor.RotateTowards(target.position, data.turnSpeed);
-
-        // Shoot according to the firing rate we set
-        if (Time.time > lastShootTime + data.fireRate) 
+        if (target != null)
         {
-            motor.Shoot(data.shootForce);
-            lastShootTime = Time.time;
+            // Spin towards the target
+            motor.RotateTowards(target.position, data.turnSpeed);
+
+            // Shoot according to the firing rate we set
+            if (Time.time > lastShootTime + data.fireRate) 
+            {
+                motor.Shoot(data.shootForce);
+                lastShootTime = Time.time;
+            }
         }
     }
 
     void Chase () 
     {
-        // Spin towards the target
-        motor.RotateTowards(target.position, data.turnSpeed);
-        // If it can then move to it
-        motor.Move (data.moveSpeed);
+        if (target != null)
+        {
+            // Spin towards the target
+            motor.RotateTowards(target.position, data.turnSpeed);
+            // If it can then move to it
+            motor.Move (data.moveSpeed);
+        }
     }
 
     void Flee () 
     {
-        // We subtract the position of the player from the tank position to know the distance between them and store it in a Vector3 variable
-        Vector3 vectorToTarget = target.position - tf.position;
-
-        // We multiply that vector by negative 1 to make it the exact opposite 
-        Vector3 vectorAwayFromTarget = -1 * vectorToTarget;
-
-        // We normalize the vector which will make it one unit exactly
-        vectorAwayFromTarget.Normalize ();
-
-        // Since it is normalized now we can easily mutliply it by any number we want to make it the distance we want it to flee
-         vectorAwayFromTarget *= fleeDistance;
-
-        // We find a vector by adding the tank position and the previous vector we got to find a point to flee to
-        Vector3 fleePosition = vectorAwayFromTarget + tf.position;
-
-        // We pass that data to the motor and move to that point
-        motor.RotateTowards( fleePosition, data.turnSpeed );
-        motor.Move (data.moveSpeed);
-
-        if (CanMove (data.moveSpeed)) 
+        if (target != null)
         {
-            // If it can then move to it
+            // We subtract the position of the player from the tank position to know the distance between them and store it in a Vector3 variable
+            Vector3 vectorToTarget = target.position - tf.position;
+
+            // We multiply that vector by negative 1 to make it the exact opposite 
+            Vector3 vectorAwayFromTarget = -1 * vectorToTarget;
+
+            // We normalize the vector which will make it one unit exactly
+            vectorAwayFromTarget.Normalize ();
+
+            // Since it is normalized now we can easily mutliply it by any number we want to make it the distance we want it to flee
+            vectorAwayFromTarget *= fleeDistance;
+
+            // We find a vector by adding the tank position and the previous vector we got to find a point to flee to
+            Vector3 fleePosition = vectorAwayFromTarget + tf.position;
+
+            // We pass that data to the motor and move to that point
+            motor.RotateTowards( fleePosition, data.turnSpeed );
             motor.Move (data.moveSpeed);
-        } else 
-        {
-            // If it can not, then start avoiding the obstacle
-            avoidanceStage = 1;
+
+            if (CanMove (data.moveSpeed)) 
+            {
+                // If it can then move to it
+                motor.Move (data.moveSpeed);
+            } else 
+            {
+                // If it can not, then start avoiding the obstacle
+                avoidanceStage = 1;
+            }
         }
     }
 
@@ -235,8 +254,11 @@ public class FSM_Sniper : MonoBehaviour
 
     void CheckPlayerDistance ()
     {
-        float distanceFromPlayer = Vector3.Distance (tf.transform.position, target.transform.position);
-        playerDistance = distanceFromPlayer;
+        if (target != null)
+        {
+            float distanceFromPlayer = Vector3.Distance (tf.transform.position, target.transform.position);
+            playerDistance = distanceFromPlayer;
+        }
     }
 
     // Change to a new state using this function

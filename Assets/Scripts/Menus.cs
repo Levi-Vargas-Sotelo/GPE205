@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class Menus : MonoBehaviour
 {
@@ -15,36 +16,47 @@ public class Menus : MonoBehaviour
     public Text livesA;
     public Text scoreA;
 
+    public Text livesB;
+    public Text scoreB;
+
+    public Text finalScoreA;
+    public Text finalScoreB;
+
     public float musicVolume;
     public float sFXVolume;
 
     public AudioClip menu;
     public AudioClip game;
     public AudioClip confirm; 
+    public AudioClip death;
 
     public AudioSource gameSounds;
-
-    // Get the mape generator object
-    public MapGenerator mapGener;
 
     // Start is called before the first frame update
     void Start()
     {
-        mapGener = GameManager.instance.mapGen;
-        gameSounds.clip = menu;
-        gameSounds.Play();
+        MainMenu();
+        
     }
 
     // Update is called once per frame
     void Update()
     {
-        livesA.text = "Lives: " + GameManager.instance.lives.ToString();
-        scoreA.text = "Score: " + GameManager.instance.playerScore.ToString();
+        //livesA.text = "Lives: " + GameManager.instance.lives.ToString();
+        //scoreA.text = "Score: " + GameManager.instance.playerScore.ToString();
 
         gameSounds.volume = musicVolume;
     }
     
     // Start the game as singler player
+
+    public void MainMenu()
+    {
+        gameSounds.clip = menu;
+        gameSounds.Play();
+        finalScoreA.text = "";
+        finalScoreB.text = "";
+    }
 
     public void SinglePlayer ()
     {
@@ -63,6 +75,10 @@ public class Menus : MonoBehaviour
         AudioSource.PlayClipAtPoint(confirm, this.transform.position, GameManager.instance.sFX);
         mainMenu.SetActive(false);
         optionsMenu.SetActive(false);
+        GameManager.instance.StartTwoPlayer();
+        uI.SetActive(true);
+        gameSounds.clip = game;
+        gameSounds.Play();
     }
 
     // Bring the options menu out
@@ -78,6 +94,7 @@ public class Menus : MonoBehaviour
         AudioSource.PlayClipAtPoint(confirm, this.transform.position, GameManager.instance.sFX);
         mainMenu.SetActive(true);
         optionsMenu.SetActive(false);
+        
     }
 
     public void ChangeVol(float volume) 
@@ -93,15 +110,22 @@ public class Menus : MonoBehaviour
     public void DayMap ()
     {
         AudioSource.PlayClipAtPoint(confirm, this.transform.position, GameManager.instance.sFX);
-        mapGener.MapOfTheDay = !mapGener.MapOfTheDay;
+        MapGenerator.mapGen.MapOfTheDay = !MapGenerator.mapGen.MapOfTheDay;
     }
 
     public void Continue ()
     {
         AudioSource.PlayClipAtPoint(confirm, this.transform.position, GameManager.instance.sFX);
-        mainMenu.SetActive(true);
-        optionsMenu.SetActive(false);
-        gameOver.SetActive(false);
+
+        Scene scene = SceneManager.GetActiveScene();
+        SceneManager.LoadScene(scene.name);
+    }
+
+    public void GameDone ()
+    {
         uI.SetActive(false);
+        gameOver.SetActive(true);
+        gameSounds.Pause();
+        AudioSource.PlayClipAtPoint(death, this.transform.position, GameManager.instance.music);
     }
 }

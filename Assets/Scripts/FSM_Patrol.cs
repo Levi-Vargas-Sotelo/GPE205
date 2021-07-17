@@ -39,6 +39,8 @@ public class FSM_Patrol : MonoBehaviour
     // Prefab for the waypoint to spawn
     public GameObject Waypoints;
 
+    public DetectPlayer sensePlayer;
+
     // Awake is called when the GameObject is initialized
     void Awake()
     {
@@ -54,68 +56,83 @@ public class FSM_Patrol : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        target = GameManager.instance.player.transform;
-
         Waypoints.transform.parent = null;        
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (target == null)
-        {
-            target = GameManager.instance.player.transform;
-        }
+        target = sensePlayer.playerTank;
+
+        
 
         switch (aiState)
         {
             case AIState.Patrol:
                 Patrol ();
-                CheckPlayerDistance ();
-                lastCheckTime = checkTime;
 
-                if (playerDistance <= aiSenseRadius)
+                if(target != null)
                 {
-                    lastShootTime = data.fireRate;
-                    ChangeState (AIState.Attack);
+                    CheckPlayerDistance ();
+
+                    if (playerDistance <= aiSenseRadius)
+                    {
+                        lastShootTime = data.fireRate;
+                        ChangeState (AIState.Attack);
+                    }
                 }
+
+                lastCheckTime = checkTime;
             break;
 
             case AIState.Attack:
-                Chase ();
-                CheckPlayerDistance ();
-
-                lastShootTime -= Time.deltaTime;
-
-                // Limit our firing rate, so we can only shoot if enough time has passed
-                if (Time.time > lastShootTime + data.fireRate) 
+                if (target != null)
                 {
-                    motor.Shoot(data.shootForce);
-                    lastShootTime = Time.time;
-                }
+                    Chase ();
+                    CheckPlayerDistance ();
 
-                if (playerDistance >= aiSenseRadius)
-                {
-                    ChangeState (AIState.Check);
-                }
+                    lastShootTime -= Time.deltaTime;
 
+                    // Limit our firing rate, so we can only shoot if enough time has passed
+                    if (Time.time > lastShootTime + data.fireRate) 
+                    {
+                        motor.Shoot(data.shootForce);
+                        lastShootTime = Time.time;
+                    }
+
+                    if (playerDistance >= aiSenseRadius)
+                    {
+                        ChangeState (AIState.Check);
+                    }
+                }
             break;
 
             case AIState.Check:
-                CheckPlayerDistance ();
-                lastCheckTime -= Time.deltaTime;
+                if (target != null)
+                {
+                    CheckPlayerDistance ();
+                    lastCheckTime -= Time.deltaTime;
 
-                if (lastCheckTime <= 0)
-                {
-                    ChangeState (AIState.Patrol);
-                }
-                
-                if (playerDistance <= aiSenseRadius)
-                {
-                    lastShootTime = data.fireRate;
-                    ChangeState (AIState.Attack);
+                    if (lastCheckTime <= 0)
+                    {
+                        ChangeState (AIState.Patrol);
+                    }
+                    
+                    if (playerDistance <= aiSenseRadius)
+                    {
+                        lastShootTime = data.fireRate;
+                        ChangeState (AIState.Attack);
+                    }
                 }
             break;
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "Player")
+        {
+            target = other.transform;
         }
     }
 
@@ -149,17 +166,23 @@ public class FSM_Patrol : MonoBehaviour
 
     void Chase () 
     {
-        // Spin towards the target
-        motor.RotateTowards(target.position, data.turnSpeed);
-        // If it can then move to it
-        motor.Move (data.moveSpeed);
+        if (target != null)
+        {
+            // Spin towards the target
+            motor.RotateTowards(target.position, data.turnSpeed);
+            // If it can then move to it
+            motor.Move (data.moveSpeed);
+        }
     }
 
     // Check to see the distance from the player to the tank and make it a float
     void CheckPlayerDistance ()
     {
-        float distanceFromPlayer = Vector3.Distance (tf.transform.position, target.transform.position);
-        playerDistance = distanceFromPlayer;
+        if (target != null)
+        {
+            float distanceFromPlayer = Vector3.Distance (tf.transform.position, target.transform.position);
+            playerDistance = distanceFromPlayer;
+        }
     }
 
     // Change to a new state using this function

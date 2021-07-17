@@ -42,6 +42,8 @@ public class FSM_Slacker : MonoBehaviour
     // Time the tank takes after avoiding something
     public float avoidanceTime = 3.0f;
     private float exitTime;
+
+    public DetectPlayer sensePlayer;
     
     // Awake is called when the GameObject is initialized 
     void Awake()
@@ -59,16 +61,14 @@ public class FSM_Slacker : MonoBehaviour
     void Start()
     {
         lastPanicTime = panicTime;
-        target = GameManager.instance.player.transform;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (target == null)
-        {
-            target = GameManager.instance.player.transform;
-        }
+        target = sensePlayer.playerTank;
+        
+        
         
         switch (aiState)
         {
@@ -79,34 +79,40 @@ public class FSM_Slacker : MonoBehaviour
                 // Prevent it from exceeding the max health value
                 data.health = Mathf.Min (data.health, data.maxHealth);
 
-                CheckPlayerDistance ();
-
-                if (playerDistance <= aiSenseRadius)
+                if (target != null)
                 {
-                    ChangeState (AIState.Panic);
+                    CheckPlayerDistance ();
+                    
+                    if (playerDistance <= aiSenseRadius)
+                    {
+                        ChangeState (AIState.Panic);
+                    }
                 }
             break;
 
             case AIState.Panic:
-                
-                lastPanicTime -= Time.deltaTime;
-
-                if (Time.time > lastShootTime + data.fireRate) 
+                if (target != null)
                 {
-                    motor.Shoot(data.shootForce);
-                    lastShootTime = Time.time;
-                }
-                
-                if (lastPanicTime <= 0)
-                {
-                    lastPanicTime = panicTime;
-                    ChangeState (AIState.Flee);
-                }
+                    lastPanicTime -= Time.deltaTime;
 
-                motor.RotateTowards(target.position, data.turnSpeed);
+                    if (Time.time > lastShootTime + data.fireRate) 
+                    {
+                        motor.Shoot(data.shootForce);
+                        lastShootTime = Time.time;
+                    }
+                    
+                    if (lastPanicTime <= 0)
+                    {
+                        lastPanicTime = panicTime;
+                        ChangeState (AIState.Flee);
+                    }
+
+                    motor.RotateTowards(target.position, data.turnSpeed);
+                }
             break;
 
             case AIState.Flee:
+
                 lastFleeTime -= Time.deltaTime;
                 Flee ();
 
@@ -121,34 +127,36 @@ public class FSM_Slacker : MonoBehaviour
 
     void Flee ()
     {
-        // We subtract the position of the player from the tank position to know the distance between them and store it in a Vector3 variable
-        Vector3 vectorToTarget = target.position - tf.position;
+        if (target != null) {
+            // We subtract the position of the player from the tank position to know the distance between them and store it in a Vector3 variable
+            Vector3 vectorToTarget = target.position - tf.position;
 
-        // We multiply that vector by negative 1 to make it the exact opposite 
-        Vector3 vectorAwayFromTarget = -1 * vectorToTarget;
+            // We multiply that vector by negative 1 to make it the exact opposite 
+            Vector3 vectorAwayFromTarget = -1 * vectorToTarget;
 
-        // We normalize the vector which will make it one unit exactly
-        vectorAwayFromTarget.Normalize ();
+            // We normalize the vector which will make it one unit exactly
+            vectorAwayFromTarget.Normalize ();
 
-        // Since it is normalized now we can easily mutliply it by any number we want to make it the distance we want it to flee
-        vectorAwayFromTarget *= fleeDistance;
+            // Since it is normalized now we can easily mutliply it by any number we want to make it the distance we want it to flee
+            vectorAwayFromTarget *= fleeDistance;
 
-        // We find a vector by adding the tank position and the previous vector we got to find a point to flee to
-        Vector3 fleePosition = vectorAwayFromTarget + tf.position;
+            // We find a vector by adding the tank position and the previous vector we got to find a point to flee to
+            Vector3 fleePosition = vectorAwayFromTarget + tf.position;
 
-        // We pass that data to the motor and move to that point
-        motor.RotateTowards(fleePosition, data.turnSpeed);
-        motor.Move (data.moveSpeed);
-
-        // See if we can move to this object using the tank's normal speed
-        if (CanMove (data.moveSpeed)) 
-        {
-            // If it can then move to it
+            // We pass that data to the motor and move to that point
+            motor.RotateTowards(fleePosition, data.turnSpeed);
             motor.Move (data.moveSpeed);
-        } else 
-        {
-            // If it can not, then start avoiding the obstacle
-            avoidanceStage = 1;
+
+            // See if we can move to this object using the tank's normal speed
+            if (CanMove (data.moveSpeed)) 
+            {
+                // If it can then move to it
+                motor.Move (data.moveSpeed);
+            } else 
+            {
+                // If it can not, then start avoiding the obstacle
+                avoidanceStage = 1;
+            }
         }
     }
 
@@ -210,15 +218,18 @@ public class FSM_Slacker : MonoBehaviour
                 return false;
             }
         }
-    // Since there is no obstacle, then keep moving to the target
-    return true;
+        // Since there is no obstacle, then keep moving to the target
+        return true;
     }
 
     // Check to see the distance from the player to the tank and make it a float
     void CheckPlayerDistance ()
     {
-        float distanceFromPlayer = Vector3.Distance (tf.transform.position, target.transform.position);
-        playerDistance = distanceFromPlayer;
+        if (target != null) 
+        {
+            float distanceFromPlayer = Vector3.Distance (tf.transform.position, target.transform.position);
+            playerDistance = distanceFromPlayer;
+        }
     }
 
     // Change to a new state using this function

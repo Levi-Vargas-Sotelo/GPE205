@@ -45,8 +45,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   input: 0
   tankPlayer: {fileID: 0}
+  playerLives: 4
+  playerCamera: {fileID: 0}
+  cameraObject: {fileID: 5722239051053753688, guid: 8ca2b9fa9aab8ed49979c2dee3041cc0, type: 3}
+  playerScore: 0
+  temporaryScore: 0
   motor: {fileID: 0}
   data: {fileID: 0}
-  playerLives: 3
   canShoot: 1
   delay: 2
+  gameOver: 0

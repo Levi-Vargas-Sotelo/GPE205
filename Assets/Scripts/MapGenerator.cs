@@ -5,8 +5,8 @@ using System;
 
 public class MapGenerator : MonoBehaviour
 {
-    public static MapGenerator instance;
-    
+    public static MapGenerator mapGen;
+
     // Variables to know the size of the grid of tile rooms we are making
     public int rows;
     public int cols;
@@ -24,6 +24,21 @@ public class MapGenerator : MonoBehaviour
 
     // Use map of the day seed
     public bool MapOfTheDay;
+
+    public void Awake() 
+    {
+        // Make sure there is only one instance of this class
+        if (mapGen == null) 
+        {
+            // Instance it if there is none in the scene
+            mapGen = this;
+        } else 
+        {
+            // Print an error log and destroy the instance since there are multiple game managers
+            Destroy(gameObject);
+            Debug.LogError("There are more than one map generators");
+        }
+    }
 
     // Start is called before the first frame update
     void Start()

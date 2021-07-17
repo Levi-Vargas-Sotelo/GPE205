@@ -9,27 +9,15 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
 
     // Get the player game object
-    public GameObject player;
-    private TankData playerData;
     public GameObject playerController;
-    public InputController inputCont;
-
-    public float playerScore;
-
-    public GameObject playerCam;
 
     public bool gameStart;
+
     // To know if the game is over and players lost their lives
     public bool gameOver;
 
-    // The player's lives
-    public float lives;
-
+    // Input for a random seed generator
     public int spawnSeed;
-
-    // Reference the map generator to use the functions in it
-    public GameObject mapGenObject;
-    public MapGenerator mapGen;
 
     // Menu variable to reference the functions from it
     public Menus menus;
@@ -44,13 +32,12 @@ public class GameManager : MonoBehaviour
 
     // Player Spawners list
     public List<GameObject> spawners;
-    // Input for a random seed generator
 
     // Make list of the scores
     public List<ScoreData> scores;
 
     // List to hold the current players
-    public List<GameObject> playersList;
+    public List<InputController> playersList;
 
     
 
@@ -70,8 +57,6 @@ public class GameManager : MonoBehaviour
         }
 
         gameStart = false;
-        mapGenObject = GameObject.Find("Map Generator");
-        mapGen = mapGenObject.GetComponent<MapGenerator>();
     }
     
     // Start is called before the first frame update
@@ -82,50 +67,35 @@ public class GameManager : MonoBehaviour
     
     public void StartOnePlayer ()
     {
-        mapGen.MakeMap();
+        MapGenerator.mapGen.MakeMap();
 
         // Set the random value and start the spawn tank function
         spawnSeed = DateToInt (DateTime.Now);
         UnityEngine.Random.InitState(spawnSeed);
 
-        // Find all pickups tanks in scene and add them to the powerups list
-        foreach(GameObject point in GameObject.FindGameObjectsWithTag("Spawner")) 
-        {
-            spawners.Add(point);
-        }
-
-        FindSpawns ();
-
-        // Spawn tank function after making the list
-        SpawnTank ();
-
-        // Finds the player object to keep track of it
-        player = GameObject.FindGameObjectWithTag("Player");
-        playerData = player.GetComponent<TankData>();
-        playerScore = playerData.Score;
+        SpawnInputController ();
 
         gameStart = true;
-
-        GiveCamera (player);
-        SetController (player);
     }
 
-    public void LookforPlayer ()
+    public void StartTwoPlayer ()
     {
-        // Finds the player object to keep track of it
-        player = GameObject.FindGameObjectWithTag("Player");
+        Debug.Log("starting 2 player mode");
+
+        MapGenerator.mapGen.MakeMap();
+
+        // Set the random value and start the spawn tank function
+        spawnSeed = DateToInt (DateTime.Now);
+        UnityEngine.Random.InitState(spawnSeed);
+
+        SpawnFirstPlayerInputController ();
+
+        SpawnSecondPlayerInputController ();
+
+        gameStart = true;
     }
 
-    public void FindSpawns ()
-    {
-        // Find all pickups tanks in scene and add them to the powerups list
-        foreach(GameObject point in GameObject.FindGameObjectsWithTag("Spawner")) 
-        {
-            spawners.Add(point);
-        }
-    }
-
-    public void SpawnTank ()
+    public void SpawnTank (InputController controllerWhoSpawned)
     {
         if (spawners.Count == 0)
         {
@@ -137,53 +107,58 @@ public class GameManager : MonoBehaviour
             int randomIndex = UnityEngine.Random.Range(0, spawners.Count);
             GameObject Point = spawners[randomIndex]; 
             PlayerSpawn spawnPoint = Point.GetComponent<PlayerSpawn>();
-            spawnPoint.SpawnTank();
+            spawnPoint.SpawnTank (controllerWhoSpawned);
             
         }
     }
 
-    public void GiveCamera (GameObject tank)
-    {
-        // Spawns a camera object and then grabs the tank and inserts it into the camera controller script
-        playerCam = Instantiate (playerCam) as GameObject;
-        CameraController camCont = playerCam.GetComponent<CameraController>();
-        camCont.player = tank;
-        // Spawns the player controller and references the tanks components as it needs them
-    }
-
-    public void SetController (GameObject tank)
+    public void SpawnInputController ()
     {
         playerController = Instantiate (playerController) as GameObject;
-        InputController inpcont = playerController.GetComponent<InputController>();
-        inpcont.GetPlayerTank(tank);
+    }
+
+    public void SpawnFirstPlayerInputController ()
+    {
+        playerController = Instantiate (playerController) as GameObject;
+        InputController pContr = playerController.GetComponent<InputController>();
+        
+        pContr.AdjustCameraUp();
+    }
+
+    public void SpawnSecondPlayerInputController ()
+    {
+        playerController = Instantiate (playerController) as GameObject;
+        InputController pContr = playerController.GetComponent<InputController>();
+        pContr.SecondPlayer = true;
+        pContr.AdjustCameraDown();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (gameStart)
-        {
-            if (lives >= 1)
-            {
-                if (player == null)
-                {
-                    lives -= 1;
-                    SpawnTank();
-                    LookforPlayer();
-                    Debug.Log("Player dead");
-                }
-                else
-                {
-                    playerScore = playerData.Score;
-                }
-            } else 
-            {
-                
-            }
-        }
-
         sFX = menus.sFXVolume;
         music = menus.musicVolume;
+    }
+
+    public void CheckPlayerLives()
+    {
+        if (gameStart)
+        {
+            foreach (InputController players in playersList)
+            {
+                if (players.playerLives == 0)
+                {
+                    gameOver = true;
+                    gameStart = false;
+                    GameIsOver();
+                }
+            }
+        }
+    }
+
+    public void GameIsOver()
+    {
+        menus.GameDone();
     }
 
     public GameObject RandomSpawnPoint () 
